@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mustafah's Portfolio</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
 </head>
@@ -201,11 +202,16 @@
                             <h3>Let's Work Together</h3>
                             <p>I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.</p>
                             <div class="contact-details">
-                                <a href="mailto:your.email@example.com" class="contact-link">maltamimi009@gmail.com</a>
+                                <a href="mailto:maltamimi009@gmail.com" class="contact-link">maltamimi009@gmail.com</a>
                                 <div class="social-links">
-                                    <a href="#" class="social-link">GitHub</a>
-                                    <a href="#" class="social-link">LinkedIn</a>
-                                    <a href="#" class="social-link">Twitter</a>
+                                    <a href="https://github.com/altamimi004" class="social-link" target="_blank" rel="noopener noreferrer">
+                                        <i class="fab fa-github"></i>
+                                        <span>GitHub</span>
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/mustafah-altamimi-038526196/" class="social-link" target="_blank" rel="noopener noreferrer">
+                                        <i class="fab fa-linkedin"></i>
+                                        <span>LinkedIn</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -241,22 +247,69 @@
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.getElementById('canvas-container').appendChild(renderer.domElement);
+            
+            // Set renderer size and position
+            const container = document.getElementById('canvas-container');
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
+            renderer.setSize(containerWidth, containerHeight);
+            container.appendChild(renderer.domElement);
 
-            // Add a cube
-            const geometry = new THREE.BoxGeometry(1, 1, 1);
-            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            // Create cube with better materials
+            const geometry = new THREE.BoxGeometry(2, 2, 2);
+            const material = new THREE.MeshPhongMaterial({ 
+                color: 0x2563eb,
+                specular: 0x2563eb,
+                shininess: 100,
+                transparent: true,
+                opacity: 0.9
+            });
             cube = new THREE.Mesh(geometry, material);
             scene.add(cube);
 
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            // Position camera
             camera.position.z = 5;
+
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('canvas-container');
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
+            
+            camera.aspect = containerWidth / containerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(containerWidth, containerHeight);
         }
 
         function animate() {
             requestAnimationFrame(animate);
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
+
+            // Base rotation
+            cube.rotation.x += 0.002;
+            cube.rotation.y += 0.002;
+
+            // Add scroll-based rotation
+            const scrollPosition = window.scrollY;
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollProgress = scrollPosition / maxScroll;
+
+            cube.rotation.x = scrollProgress * Math.PI * 2;
+            cube.rotation.y = scrollProgress * Math.PI * 4;
+
+            // Add floating animation
+            cube.position.y = Math.sin(Date.now() * 0.001) * 0.5;
+
             renderer.render(scene, camera);
         }
 
