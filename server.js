@@ -10,12 +10,17 @@ require('dotenv').config();
 const app = express();
 
 // Configure CORS
-app.use(cors({
+const corsOptions = {
     origin: ['https://altamimi004.github.io', 'http://localhost:3000'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
-}));
+};
+
+app.use(cors(corsOptions));
+
+// Handle OPTIONS requests
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 app.use(express.static('public'));
