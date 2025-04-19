@@ -320,16 +320,29 @@
         const API_BASE_URL = 'https://altamimi004-github-io.onrender.com';
         let currentSection = 'hero';
 
-        // Check authentication
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = 'admin.html';
-            return;
+        // Initialize the dashboard
+        async function initializeDashboard() {
+            // Check authentication
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'admin.html';
+                return;
+            }
+
+            // Load content and skills
+            await loadContent();
+            await loadSkills();
         }
 
         // Add authentication check function
         async function checkAuth() {
             try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = 'admin.html';
+                    return false;
+                }
+
                 const response = await fetch(`${API_BASE_URL}/api/check-auth`, {
                     method: 'GET',
                     headers: {
@@ -354,32 +367,6 @@
             }
         }
 
-        // Update preview
-        function updatePreview(section) {
-            switch(section) {
-                case 'hero':
-                    document.getElementById('previewHeroTitle').textContent = document.getElementById('heroTitle').value;
-                    document.getElementById('previewHeroDescription').textContent = document.getElementById('heroDescription').value;
-                    break;
-                case 'about':
-                    document.getElementById('previewAboutContent').textContent = document.getElementById('aboutContent').value;
-                    break;
-            }
-        }
-
-        // Handle image upload
-        async function handleImageUpload(section) {
-            const file = document.getElementById(`${section}Image`).files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById(`${section}Preview`).src = e.target.result;
-                    document.getElementById(`preview${section.charAt(0).toUpperCase() + section.slice(1)}Image`).src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
         // Load content
         async function loadContent() {
             const isAuthenticated = await checkAuth();
@@ -390,7 +377,7 @@
                 const globalResponse = await fetch(`${API_BASE_URL}/api/content/global`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -413,7 +400,7 @@
                 const response = await fetch(`${API_BASE_URL}/api/content/${currentSection}`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -455,7 +442,7 @@
                 const response = await fetch(`${API_BASE_URL}/api/content/${section}`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ content })
@@ -573,7 +560,7 @@
                 const response = await fetch(`${API_BASE_URL}/api/content/skills`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -689,9 +676,34 @@
             await saveContent('global', settings);
         });
 
-        // Initialize
-        loadContent();
-        loadSkills();
+        // Update preview
+        function updatePreview(section) {
+            switch(section) {
+                case 'hero':
+                    document.getElementById('previewHeroTitle').textContent = document.getElementById('heroTitle').value;
+                    document.getElementById('previewHeroDescription').textContent = document.getElementById('heroDescription').value;
+                    break;
+                case 'about':
+                    document.getElementById('previewAboutContent').textContent = document.getElementById('aboutContent').value;
+                    break;
+            }
+        }
+
+        // Handle image upload
+        async function handleImageUpload(section) {
+            const file = document.getElementById(`${section}Image`).files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById(`${section}Preview`).src = e.target.result;
+                    document.getElementById(`preview${section.charAt(0).toUpperCase() + section.slice(1)}Image`).src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Initialize the dashboard when the page loads
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
     </script>
 </body>
 </html> 
