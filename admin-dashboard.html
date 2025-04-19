@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .dashboard {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .section-editor {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .editor-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .editor-form textarea {
+            min-height: 100px;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .editor-form button {
+            padding: 0.8rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .editor-form button:hover {
+            background: #2980b9;
+        }
+
+        .image-upload {
+            margin-top: 1rem;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            margin-top: 1rem;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Admin Dashboard</div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="dashboard">
+        <div class="section-editor">
+            <h2>Hero Section</h2>
+            <form class="editor-form" id="heroForm">
+                <input type="text" id="heroTitle" placeholder="Title">
+                <textarea id="heroDescription" placeholder="Description"></textarea>
+                <div class="image-upload">
+                    <input type="file" id="heroImage" accept="image/*">
+                    <img id="heroPreview" class="preview-image" src="" alt="Preview">
+                </div>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+
+        <div class="section-editor">
+            <h2>About Section</h2>
+            <form class="editor-form" id="aboutForm">
+                <textarea id="aboutContent" placeholder="About content"></textarea>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+
+        <div class="section-editor">
+            <h2>Skills Section</h2>
+            <form class="editor-form" id="skillsForm">
+                <div id="skillsList">
+                    <!-- Skills will be added here dynamically -->
+                </div>
+                <button type="button" onclick="addSkill()">Add Skill</button>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/admin.html';
+        }
+
+        // Load content
+        async function loadContent() {
+            try {
+                const response = await fetch('/api/content/hero', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const heroContent = await response.json();
+                if (heroContent.content) {
+                    document.getElementById('heroTitle').value = heroContent.content.title || '';
+                    document.getElementById('heroDescription').value = heroContent.content.description || '';
+                    if (heroContent.content.image) {
+                        document.getElementById('heroPreview').src = heroContent.content.image;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading content:', error);
+            }
+        }
+
+        // Save content
+        async function saveContent(section, content) {
+            try {
+                const response = await fetch(`/api/content/${section}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content })
+                });
+                if (!response.ok) throw new Error('Failed to save content');
+            } catch (error) {
+                console.error('Error saving content:', error);
+            }
+        }
+
+        // Handle image upload
+        async function uploadImage(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                const data = await response.json();
+                return data.url;
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                return null;
+            }
+        }
+
+        // Event listeners
+        document.getElementById('heroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('heroTitle').value;
+            const description = document.getElementById('heroDescription').value;
+            const imageFile = document.getElementById('heroImage').files[0];
+            
+            let imageUrl = null;
+            if (imageFile) {
+                imageUrl = await uploadImage(imageFile);
+            }
+
+            await saveContent('hero', { title, description, image: imageUrl });
+        });
+
+        document.getElementById('heroImage').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('heroPreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/admin.html';
+        }
+
+        // Initialize
+        loadContent();
+    </script>
+</body>
+</html> 
