@@ -617,23 +617,8 @@
             }
         }
 
-        // Save skills
-        document.getElementById('skillsForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const skills = [];
-            document.querySelectorAll('.skill-item').forEach(item => {
-                const name = item.querySelector('.skill-name').value;
-                const level = item.querySelector('.skill-level').value;
-                if (name) {
-                    skills.push({ name, level });
-                }
-            });
-
-            await saveContent('skills', { skills });
-        });
-
         // Event listeners
-        document.getElementById('heroForm').addEventListener('submit', async (e) => {
+        document.getElementById('heroForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const title = document.getElementById('heroTitle').value;
             const description = document.getElementById('heroDescription').value;
@@ -647,26 +632,14 @@
             await saveContent('hero', { title, description, image: imageUrl });
         });
 
-        document.getElementById('aboutForm').addEventListener('submit', async (e) => {
+        document.getElementById('aboutForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const content = document.getElementById('aboutContent').value;
             await saveContent('about', { content });
         });
 
-        // Add global settings functions
-        function updateGlobalPreview() {
-            // Update page title
-            document.getElementById('previewPageTitle').textContent = document.getElementById('pageTitle').value;
-            
-            // Update background color
-            document.getElementById('previewContent').style.backgroundColor = document.getElementById('backgroundColor').value;
-            
-            // Update footer email
-            document.getElementById('previewFooterEmail').textContent = document.getElementById('footerEmail').value;
-        }
-
         // Add global settings event listener
-        document.getElementById('globalForm').addEventListener('submit', async (e) => {
+        document.getElementById('globalForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const settings = {
                 title: document.getElementById('pageTitle').value,
@@ -674,6 +647,21 @@
                 footerEmail: document.getElementById('footerEmail').value
             };
             await saveContent('global', settings);
+        });
+
+        // Save skills
+        document.getElementById('skillsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const skills = [];
+            document.querySelectorAll('.skill-item').forEach(item => {
+                const name = item.querySelector('.skill-name').value;
+                const level = item.querySelector('.skill-level').value;
+                if (name) {
+                    skills.push({ name, level });
+                }
+            });
+
+            await saveContent('skills', { skills });
         });
 
         // Update preview
@@ -702,8 +690,22 @@
             }
         }
 
+        // Add global settings functions
+        function updateGlobalPreview() {
+            // Update page title
+            document.getElementById('previewPageTitle').textContent = document.getElementById('pageTitle').value;
+            
+            // Update background color
+            document.getElementById('previewContent').style.backgroundColor = document.getElementById('backgroundColor').value;
+            
+            // Update footer email
+            document.getElementById('previewFooterEmail').textContent = document.getElementById('footerEmail').value;
+        }
+
         // Initialize the dashboard when the page loads
-        document.addEventListener('DOMContentLoaded', initializeDashboard);
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+        });
     </script>
 </body>
 </html> 
