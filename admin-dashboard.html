@@ -105,6 +105,9 @@
     </div>
 
     <script>
+        const API_BASE_URL = 'https://altamimi004-github-io.onrender.com';
+        let currentSection = 'hero';
+
         // Check authentication
         const token = localStorage.getItem('token');
         if (!token) {
@@ -114,17 +117,17 @@
         // Load content
         async function loadContent() {
             try {
-                const response = await fetch('/api/content/hero', {
+                const response = await fetch(`${API_BASE_URL}/api/content/${currentSection}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                const heroContent = await response.json();
-                if (heroContent.content) {
-                    document.getElementById('heroTitle').value = heroContent.content.title || '';
-                    document.getElementById('heroDescription').value = heroContent.content.description || '';
-                    if (heroContent.content.image) {
-                        document.getElementById('heroPreview').src = heroContent.content.image;
+                const content = await response.json();
+                if (content.content) {
+                    document.getElementById(currentSection + 'Title').value = content.content.title || '';
+                    document.getElementById(currentSection + 'Description').value = content.content.description || '';
+                    if (content.content.image) {
+                        document.getElementById(currentSection + 'Preview').src = content.content.image;
                     }
                 }
             } catch (error) {
@@ -135,7 +138,7 @@
         // Save content
         async function saveContent(section, content) {
             try {
-                const response = await fetch(`/api/content/${section}`, {
+                const response = await fetch(`${API_BASE_URL}/api/content/${section}`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -155,7 +158,7 @@
             formData.append('image', file);
 
             try {
-                const response = await fetch('/api/upload', {
+                const response = await fetch(`${API_BASE_URL}/api/upload`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`
