@@ -72,13 +72,15 @@
     </div>
 
     <script>
+        const API_BASE_URL = 'https://altamimi004-github-io.onrender.com';
+
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch('/api/register', {
+                const response = await fetch(`${API_BASE_URL}/api/register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -92,7 +94,7 @@
                     document.getElementById('successMessage').textContent = 'Registration successful! Redirecting to login...';
                     document.getElementById('errorMessage').textContent = '';
                     setTimeout(() => {
-                        window.location.href = '/admin.html';
+                        window.location.href = 'admin.html';
                     }, 2000);
                 } else {
                     document.getElementById('errorMessage').textContent = data.message;
