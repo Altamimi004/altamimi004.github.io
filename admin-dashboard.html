@@ -111,17 +111,24 @@
         // Check authentication
         const token = localStorage.getItem('token');
         if (!token) {
-            window.location.href = '/admin.html';
+            window.location.href = 'admin.html';
         }
 
         // Load content
         async function loadContent() {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/content/${currentSection}`, {
+                    method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const content = await response.json();
                 if (content.content) {
                     document.getElementById(currentSection + 'Title').value = content.content.title || '';
@@ -146,7 +153,13 @@
                     },
                     body: JSON.stringify({ content })
                 });
-                if (!response.ok) throw new Error('Failed to save content');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Content saved successfully:', result);
             } catch (error) {
                 console.error('Error saving content:', error);
             }
@@ -165,6 +178,11 @@
                     },
                     body: formData
                 });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
                 return data.url;
             } catch (error) {
