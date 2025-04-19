@@ -244,7 +244,8 @@ h2 {
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+    gap: 3rem;
+    margin-top: 2rem;
 }
 
 .project-card {
@@ -253,6 +254,8 @@ h2 {
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     transition: var(--transition);
+    display: flex;
+    flex-direction: column;
 }
 
 .project-card:hover {
@@ -280,6 +283,57 @@ h2 {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 600;
+}
+
+.project-tech {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+}
+
+.project-tech span {
+    background-color: rgba(37, 99, 235, 0.1);
+    color: var(--primary-color);
+    padding: 0.3rem 0.8rem;
+    border-radius: 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.new-badge {
+    background-color: rgba(234, 88, 12, 0.1);
+    color: #ea580c;
+}
+
+.new-badge i {
+    font-size: 0.8rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (min-width: 1200px) {
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
 }
 
 /* Skills Section */
@@ -699,4 +753,150 @@ footer {
         flex-direction: column;
         gap: 0.5rem;
     }
+}
+
+.project-gallery {
+    margin-bottom: 2rem;
+}
+
+.main-image {
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.main-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.screenshot-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.screenshot-grid img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.screenshot-grid img:hover {
+    transform: translateY(-2px);
+}
+
+.project-features {
+    margin: 1.5rem 0;
+}
+
+.project-features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.project-features li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.project-features li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+}
+
+.project-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.project-link {
+    flex: 1;
+    min-width: 200px;
+    justify-content: center;
+    text-align: center;
+}
+
+.project-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.project-link i {
+    font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+    .screenshot-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .project-links {
+        flex-direction: column;
+    }
+
+    .project-link {
+        min-width: 100%;
+    }
+
+    .app-badges {
+        flex-wrap: wrap;
+    }
+}
+
+.app-badges {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.platform-badge, .rating-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.platform-badge {
+    background-color: rgba(37, 99, 235, 0.1);
+    color: var(--primary-color);
+}
+
+.rating-badge {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+}
+
+.rating-badge i {
+    color: #eab308;
+}
+
+.project-link.apple {
+    background-color: #000000;
+}
+
+.project-link.google {
+    background-color: #01875f;
+}
+
+.project-link.apple:hover {
+    background-color: #1a1a1a;
+}
+
+.project-link.google:hover {
+    background-color: #016d4e;
 } 
